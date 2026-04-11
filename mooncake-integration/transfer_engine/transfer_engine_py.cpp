@@ -22,7 +22,7 @@
 #include "transport/rpc_communicator/rpc_interface.h"
 
 #ifdef USE_MNNVL
-#include "transport/nvlink_transport/nvlink_transport.h"
+#include "gpu_vendor/mnnvl.h"
 #endif
 
 #ifdef USE_INTRA_NVLINK
@@ -48,10 +48,10 @@ void initMemoryAllocator(const char *protocol) {
     if (strcmp(protocol, "nvlink") == 0) {
 #ifdef USE_MNNVL
         allocateMemory = [](size_t s) -> void * {
-            return mooncake::NvlinkTransport::allocatePinnedLocalMemory(s);
+            return allocateFabricMemory(s);
         };
         freeMemory = [](void *p) {
-            mooncake::NvlinkTransport::freePinnedLocalMemory(p);
+            freeFabricMemory(p);
         };
         LOG(INFO) << "Selected MNNVL (NVLink) memory allocator";
 #else

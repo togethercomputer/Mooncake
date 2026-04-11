@@ -264,13 +264,18 @@ int TransferEngineImpl::init(const std::string& metadata_conn_string,
             LOG(INFO) << "Using Intra-Node NVLink transport "
                          "(MC_INTRANODE_NVLINK set)";
         } else if (force_mnnvl || local_topology_->getHcaList().empty()) {
+#ifdef USE_HIP
+            const char* transport_name = "hip";
+#else
+            const char* transport_name = "nvlink";
+#endif
             Transport* t =
-                multi_transports_->installTransport("nvlink", nullptr);
+                multi_transports_->installTransport(transport_name, nullptr);
             if (!t) {
-                LOG(ERROR) << "Failed to install NVLink transport";
+                LOG(ERROR) << "Failed to install " << transport_name << " transport";
                 return -1;
             }
-            LOG(INFO) << "Using cross-node NVLink transport "
+            LOG(INFO) << "Using " << transport_name << " transport "
                       << "(MC_FORCE_MNNVL or no HCA detected)";
         } else {
             Transport* t =

@@ -658,6 +658,15 @@ int HipTransport::registerLocalMemory(void *addr, size_t length,
 
     // Fabric memory registration
     else {
+        // Skip non-device memory (CPU metadata buffers).
+        hipPointerAttribute_t attr;
+        hipError_t check = hipPointerGetAttributes(&attr, addr);
+        if (check != hipSuccess || attr.type != hipMemoryTypeDevice) {
+            LOG(WARNING) << "HipTransport: skipping non-device memory " << addr
+                         << " type=" << (check == hipSuccess ? attr.type : -1);
+            return 0;
+        }
+
         // Retain allocation handle
         hipMemGenericAllocationHandle_t handle;
         hipError_t result = hipMemRetainAllocationHandle(&handle, addr);
