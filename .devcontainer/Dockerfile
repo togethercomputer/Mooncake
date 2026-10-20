@@ -26,8 +26,8 @@ RUN apt-get install -y libibverbs-dev \
     pkg-config \
     patchelf
 
-RUN wget https://go.dev/dl/go1.22.12.linux-amd64.tar.gz \
-    && tar -C /usr/local -xzf go1.22.12.linux-amd64.tar.gz
+RUN wget https://go.dev/dl/go1.26.10.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go1.26.10.linux-amd64.tar.gz
 
 RUN git clone https://github.com/alibaba/yalantinglibs.git \
     && cd yalantinglibs \
