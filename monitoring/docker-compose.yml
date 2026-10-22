@@ -20,7 +20,8 @@ services:
       - monitoring
 
   grafana:
-    image: grafana/grafana:13.2.4
+    build: ./grafana
+    image: mooncake-grafana:13.2.4
     container_name: grafana
     restart: unless-stopped
     ports:

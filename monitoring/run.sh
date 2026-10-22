@@ -30,6 +30,7 @@ docker run -d \
   --web.console.templates=/usr/share/prometheus/consoles
 
 echo "Starting Grafana..."
+docker build -t mooncake-grafana:13.2.4 "$SCRIPT_DIR/grafana" || exit 1
 docker run -d \
   --name grafana \
   --restart unless-stopped \
@@ -41,7 +42,7 @@ docker run -d \
   -v grafana-data:/var/lib/grafana \
   -v "$SCRIPT_DIR/grafana/provisioning:/etc/grafana/provisioning" \
   -v "$SCRIPT_DIR/grafana/dashboards:/etc/grafana/dashboards" \
-  grafana/grafana:13.2.4
+  mooncake-grafana:13.2.4
 
 echo "Monitoring stack started!"
 echo "Prometheus: http://localhost:9090"
