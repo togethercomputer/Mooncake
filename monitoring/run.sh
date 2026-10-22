@@ -23,7 +23,7 @@ docker run -d \
   -p 9090:9090 \
   -v "$SCRIPT_DIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml" \
   --add-host host.docker.internal:host-gateway \
-  prom/prometheus:v2.54.0 \
+  prom/prometheus:v3.15.1 \
   --config.file=/etc/prometheus/prometheus.yml \
   --storage.tsdb.retention.time=15d \
   --web.console.libraries=/usr/share/prometheus/console_libraries \
@@ -41,7 +41,7 @@ docker run -d \
   -v grafana-data:/var/lib/grafana \
   -v "$SCRIPT_DIR/grafana/provisioning:/etc/grafana/provisioning" \
   -v "$SCRIPT_DIR/grafana/dashboards:/etc/grafana/dashboards" \
-  grafana/grafana-oss:11.0.0
+  grafana/grafana:13.2.4
 
 echo "Monitoring stack started!"
 echo "Prometheus: http://localhost:9090"
