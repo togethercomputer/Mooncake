@@ -8,6 +8,14 @@ ARG UBUNTU_VERSION=22.04
 
 FROM mthreads/musa:${MUSA_VERSION}-devel-ubuntu${UBUNTU_VERSION}-amd64 AS builder
 
+# CVE fix: pull the patched ca-certificates from the Ubuntu security pocket
+# until the upstream base image is rebuilt; fail if it is still old.
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --only-upgrade ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    v="$(dpkg-query -W -f='${Version}' ca-certificates)" && \
+    dpkg --compare-versions "$v" ge 20260816 || { echo "ca-certificates $v is older than 20260816" >&2; exit 1; }
+
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1
 
@@ -61,6 +69,14 @@ RUN OUTPUT_DIR=dist ./scripts/build_wheel.sh
 ###############################################################################
 FROM mthreads/musa:${MUSA_VERSION}-devel-ubuntu${UBUNTU_VERSION}-amd64 AS runtime
 
+# CVE fix: pull the patched ca-certificates from the Ubuntu security pocket
+# until the upstream base image is rebuilt; fail if it is still old.
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --only-upgrade ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    v="$(dpkg-query -W -f='${Version}' ca-certificates)" && \
+    dpkg --compare-versions "$v" ge 20260816 || { echo "ca-certificates $v is older than 20260816" >&2; exit 1; }
+
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
@@ -68,6 +84,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install runtime dependencies required by Mooncake
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        ca-certificates \
         python3 \
         python3-pip \
         ibverbs-providers \

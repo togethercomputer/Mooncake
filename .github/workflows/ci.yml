@@ -209,6 +209,8 @@ jobs:
     - name: Configure project
       run: |
         apt update -y
+        apt-get install -y --only-upgrade ca-certificates
+        dpkg --compare-versions "$(dpkg-query -W -f='${Version}' ca-certificates)" ge 20260816
         bash -x dependencies.sh -y
         mkdir build
         cd build
